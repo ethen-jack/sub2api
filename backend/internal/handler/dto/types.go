@@ -634,9 +634,10 @@ type UsageLog struct {
 	OpenAIWSMode bool   `json:"openai_ws_mode"`
 	// NativeCompactionV2 is true only for requests positively identified at
 	// runtime as the native OpenAI remote compaction v2 wire.
-	NativeCompactionV2 bool `json:"native_compaction_v2"`
-	DurationMs         *int `json:"duration_ms"`
-	FirstTokenMs       *int `json:"first_token_ms"`
+	NativeCompactionV2    bool `json:"native_compaction_v2"`
+	OutputTokensEstimated bool `json:"output_tokens_estimated"`
+	DurationMs            *int `json:"duration_ms"`
+	FirstTokenMs          *int `json:"first_token_ms"`
 
 	// 图片生成字段
 	ImageCount         int            `json:"image_count"`

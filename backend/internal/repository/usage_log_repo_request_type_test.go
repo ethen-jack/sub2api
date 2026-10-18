@@ -101,6 +101,7 @@ func TestUsageLogRepositoryCreateSyncRequestTypeAndLegacyFields(t *testing.T) {
 			sqlmock.AnyArg(), // account_stats_cost
 			sqlmock.AnyArg(), // upstream_request_id
 			sqlmock.AnyArg(), // session_id
+			log.OutputTokensEstimated,
 			log.NativeCompactionV2,
 			createdAt,
 		).
@@ -196,6 +197,7 @@ func TestUsageLogRepositoryCreate_PersistsServiceTier(t *testing.T) {
 			sqlmock.AnyArg(), // account_stats_cost
 			sqlmock.AnyArg(), // upstream_request_id
 			sqlmock.AnyArg(), // session_id
+			log.OutputTokensEstimated,
 			log.NativeCompactionV2,
 			createdAt,
 		).
@@ -959,6 +961,7 @@ func TestScanUsageLogRequestTypeAndLegacyFallback(t *testing.T) {
 			sql.NullFloat64{},
 			sql.NullString{}, // upstream_request_id
 			sql.NullString{},
+			false, // output_tokens_estimated
 			false, // native_compaction_v2
 			now,
 		}})
@@ -1039,6 +1042,7 @@ func TestScanUsageLogRequestTypeAndLegacyFallback(t *testing.T) {
 			sql.NullFloat64{}, // account_stats_cost
 			sql.NullString{},  // upstream_request_id
 			sql.NullString{},  // session_id
+			false,             // output_tokens_estimated
 			false,             // native_compaction_v2
 			now,
 		}})
@@ -1102,6 +1106,7 @@ func TestScanUsageLogRequestTypeAndLegacyFallback(t *testing.T) {
 			sql.NullFloat64{}, // account_stats_cost
 			sql.NullString{},  // upstream_request_id
 			sql.NullString{},  // session_id
+			true,              // output_tokens_estimated
 			true,              // native_compaction_v2
 			now,
 		}})
@@ -1112,6 +1117,7 @@ func TestScanUsageLogRequestTypeAndLegacyFallback(t *testing.T) {
 		require.True(t, log.Stream)
 		require.False(t, log.OpenAIWSMode)
 		require.True(t, log.NativeCompactionV2)
+		require.True(t, log.OutputTokensEstimated)
 	})
 
 	t.Run("service_tier_is_scanned", func(t *testing.T) {
@@ -1166,6 +1172,7 @@ func TestScanUsageLogRequestTypeAndLegacyFallback(t *testing.T) {
 			sql.NullFloat64{}, // account_stats_cost
 			sql.NullString{},  // upstream_request_id
 			sql.NullString{},  // session_id
+			false,             // output_tokens_estimated
 			false,             // native_compaction_v2
 			now,
 		}})

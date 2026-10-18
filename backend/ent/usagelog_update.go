@@ -351,6 +351,20 @@ func (_u *UsageLogUpdate) AddOutputTokens(v int) *UsageLogUpdate {
 	return _u
 }
 
+// SetOutputTokensEstimated sets the "output_tokens_estimated" field.
+func (_u *UsageLogUpdate) SetOutputTokensEstimated(v bool) *UsageLogUpdate {
+	_u.mutation.SetOutputTokensEstimated(v)
+	return _u
+}
+
+// SetNillableOutputTokensEstimated sets the "output_tokens_estimated" field if the given value is not nil.
+func (_u *UsageLogUpdate) SetNillableOutputTokensEstimated(v *bool) *UsageLogUpdate {
+	if v != nil {
+		_u.SetOutputTokensEstimated(*v)
+	}
+	return _u
+}
+
 // SetCacheCreationTokens sets the "cache_creation_tokens" field.
 func (_u *UsageLogUpdate) SetCacheCreationTokens(v int) *UsageLogUpdate {
 	_u.mutation.ResetCacheCreationTokens()
@@ -1204,6 +1218,9 @@ func (_u *UsageLogUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.AddedOutputTokens(); ok {
 		_spec.AddField(usagelog.FieldOutputTokens, field.TypeInt, value)
 	}
+	if value, ok := _u.mutation.OutputTokensEstimated(); ok {
+		_spec.SetField(usagelog.FieldOutputTokensEstimated, field.TypeBool, value)
+	}
 	if value, ok := _u.mutation.CacheCreationTokens(); ok {
 		_spec.SetField(usagelog.FieldCacheCreationTokens, field.TypeInt, value)
 	}
@@ -1862,6 +1879,20 @@ func (_u *UsageLogUpdateOne) SetNillableOutputTokens(v *int) *UsageLogUpdateOne 
 // AddOutputTokens adds value to the "output_tokens" field.
 func (_u *UsageLogUpdateOne) AddOutputTokens(v int) *UsageLogUpdateOne {
 	_u.mutation.AddOutputTokens(v)
+	return _u
+}
+
+// SetOutputTokensEstimated sets the "output_tokens_estimated" field.
+func (_u *UsageLogUpdateOne) SetOutputTokensEstimated(v bool) *UsageLogUpdateOne {
+	_u.mutation.SetOutputTokensEstimated(v)
+	return _u
+}
+
+// SetNillableOutputTokensEstimated sets the "output_tokens_estimated" field if the given value is not nil.
+func (_u *UsageLogUpdateOne) SetNillableOutputTokensEstimated(v *bool) *UsageLogUpdateOne {
+	if v != nil {
+		_u.SetOutputTokensEstimated(*v)
+	}
 	return _u
 }
 
@@ -2747,6 +2778,9 @@ func (_u *UsageLogUpdateOne) sqlSave(ctx context.Context) (_node *UsageLog, err 
 	}
 	if value, ok := _u.mutation.AddedOutputTokens(); ok {
 		_spec.AddField(usagelog.FieldOutputTokens, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.OutputTokensEstimated(); ok {
+		_spec.SetField(usagelog.FieldOutputTokensEstimated, field.TypeBool, value)
 	}
 	if value, ok := _u.mutation.CacheCreationTokens(); ok {
 		_spec.SetField(usagelog.FieldCacheCreationTokens, field.TypeInt, value)

@@ -411,6 +411,8 @@ func (s *GatewayService) handleStreamingResponseAnthropicAPIKeyPassthrough(
 	}
 
 	usage := &ClaudeUsage{}
+	outputTracker := s.streamOutputTracker()
+	defer outputTracker.finalize(usage, c, account)
 	var firstTokenMs *int
 	clientDisconnected := false
 	sawTerminalEvent := false
@@ -536,6 +538,7 @@ func (s *GatewayService) handleStreamingResponseAnthropicAPIKeyPassthrough(
 			if data, ok := extractAnthropicSSEDataLine(line); ok {
 				trimmed := strings.TrimSpace(data)
 				observer.ObserveAnthropic([]byte(trimmed))
+				outputTracker.observe(trimmed)
 				if anthropicStreamEventIsTerminal("", trimmed) {
 					sawTerminalEvent = true
 				}
@@ -635,6 +638,7 @@ func parseSSEUsagePassthrough(data string, usage *ClaudeUsage) {
 		msgUsage := parsed.Get("message.usage")
 		if msgUsage.Exists() {
 			usage.InputTokens = int(msgUsage.Get("input_tokens").Int())
+			usage.OutputTokens = int(msgUsage.Get("output_tokens").Int())
 			usage.CacheCreationInputTokens = int(msgUsage.Get("cache_creation_input_tokens").Int())
 			usage.CacheReadInputTokens = int(msgUsage.Get("cache_read_input_tokens").Int())
 
@@ -652,8 +656,8 @@ func parseSSEUsagePassthrough(data string, usage *ClaudeUsage) {
 			if v := deltaUsage.Get("input_tokens").Int(); v > 0 {
 				usage.InputTokens = int(v)
 			}
-			if v := deltaUsage.Get("output_tokens").Int(); v > 0 {
-				usage.OutputTokens = int(v)
+			if v := deltaUsage.Get("output_tokens"); v.Type == gjson.Number && v.Int() >= 0 {
+				usage.OutputTokens = int(v.Int())
 			}
 			if v := deltaUsage.Get("cache_creation_input_tokens").Int(); v > 0 {
 				usage.CacheCreationInputTokens = int(v)

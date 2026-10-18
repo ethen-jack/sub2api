@@ -140,6 +140,11 @@ func OutputTokens(v int) predicate.UsageLog {
 	return predicate.UsageLog(sql.FieldEQ(FieldOutputTokens, v))
 }
 
+// OutputTokensEstimated applies equality check predicate on the "output_tokens_estimated" field. It's identical to OutputTokensEstimatedEQ.
+func OutputTokensEstimated(v bool) predicate.UsageLog {
+	return predicate.UsageLog(sql.FieldEQ(FieldOutputTokensEstimated, v))
+}
+
 // CacheCreationTokens applies equality check predicate on the "cache_creation_tokens" field. It's identical to CacheCreationTokensEQ.
 func CacheCreationTokens(v int) predicate.UsageLog {
 	return predicate.UsageLog(sql.FieldEQ(FieldCacheCreationTokens, v))
@@ -1133,6 +1138,16 @@ func OutputTokensLT(v int) predicate.UsageLog {
 // OutputTokensLTE applies the LTE predicate on the "output_tokens" field.
 func OutputTokensLTE(v int) predicate.UsageLog {
 	return predicate.UsageLog(sql.FieldLTE(FieldOutputTokens, v))
+}
+
+// OutputTokensEstimatedEQ applies the EQ predicate on the "output_tokens_estimated" field.
+func OutputTokensEstimatedEQ(v bool) predicate.UsageLog {
+	return predicate.UsageLog(sql.FieldEQ(FieldOutputTokensEstimated, v))
+}
+
+// OutputTokensEstimatedNEQ applies the NEQ predicate on the "output_tokens_estimated" field.
+func OutputTokensEstimatedNEQ(v bool) predicate.UsageLog {
+	return predicate.UsageLog(sql.FieldNEQ(FieldOutputTokensEstimated, v))
 }
 
 // CacheCreationTokensEQ applies the EQ predicate on the "cache_creation_tokens" field.

@@ -57,6 +57,8 @@ type UsageLog struct {
 	InputTokens int `json:"input_tokens,omitempty"`
 	// OutputTokens holds the value of the "output_tokens" field.
 	OutputTokens int `json:"output_tokens,omitempty"`
+	// Output tokens include a local estimate because final upstream usage was unavailable
+	OutputTokensEstimated bool `json:"output_tokens_estimated,omitempty"`
 	// CacheCreationTokens holds the value of the "cache_creation_tokens" field.
 	CacheCreationTokens int `json:"cache_creation_tokens,omitempty"`
 	// CacheReadTokens holds the value of the "cache_read_tokens" field.
@@ -202,7 +204,7 @@ func (*UsageLog) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case usagelog.FieldImageSizeBreakdown:
 			values[i] = new([]byte)
-		case usagelog.FieldUpstreamModelMismatch, usagelog.FieldLongContextBillingApplied, usagelog.FieldStream, usagelog.FieldCacheTTLOverridden:
+		case usagelog.FieldUpstreamModelMismatch, usagelog.FieldOutputTokensEstimated, usagelog.FieldLongContextBillingApplied, usagelog.FieldStream, usagelog.FieldCacheTTLOverridden:
 			values[i] = new(sql.NullBool)
 		case usagelog.FieldInputCost, usagelog.FieldOutputCost, usagelog.FieldCacheCreationCost, usagelog.FieldCacheReadCost, usagelog.FieldTotalCost, usagelog.FieldActualCost, usagelog.FieldRateMultiplier, usagelog.FieldAccountRateMultiplier:
 			values[i] = new(sql.NullFloat64)
@@ -344,6 +346,12 @@ func (_m *UsageLog) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field output_tokens", values[i])
 			} else if value.Valid {
 				_m.OutputTokens = int(value.Int64)
+			}
+		case usagelog.FieldOutputTokensEstimated:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field output_tokens_estimated", values[i])
+			} else if value.Valid {
+				_m.OutputTokensEstimated = value.Bool
 			}
 		case usagelog.FieldCacheCreationTokens:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -669,6 +677,9 @@ func (_m *UsageLog) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("output_tokens=")
 	builder.WriteString(fmt.Sprintf("%v", _m.OutputTokens))
+	builder.WriteString(", ")
+	builder.WriteString("output_tokens_estimated=")
+	builder.WriteString(fmt.Sprintf("%v", _m.OutputTokensEstimated))
 	builder.WriteString(", ")
 	builder.WriteString("cache_creation_tokens=")
 	builder.WriteString(fmt.Sprintf("%v", _m.CacheCreationTokens))

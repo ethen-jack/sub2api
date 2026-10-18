@@ -44686,6 +44686,7 @@ type UsageLogMutation struct {
 	addinput_tokens              *int
 	output_tokens                *int
 	addoutput_tokens             *int
+	output_tokens_estimated      *bool
 	cache_creation_tokens        *int
 	addcache_creation_tokens     *int
 	cache_read_tokens            *int
@@ -45649,6 +45650,42 @@ func (m *UsageLogMutation) AddedOutputTokens() (r int, exists bool) {
 func (m *UsageLogMutation) ResetOutputTokens() {
 	m.output_tokens = nil
 	m.addoutput_tokens = nil
+}
+
+// SetOutputTokensEstimated sets the "output_tokens_estimated" field.
+func (m *UsageLogMutation) SetOutputTokensEstimated(b bool) {
+	m.output_tokens_estimated = &b
+}
+
+// OutputTokensEstimated returns the value of the "output_tokens_estimated" field in the mutation.
+func (m *UsageLogMutation) OutputTokensEstimated() (r bool, exists bool) {
+	v := m.output_tokens_estimated
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOutputTokensEstimated returns the old "output_tokens_estimated" field's value of the UsageLog entity.
+// If the UsageLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UsageLogMutation) OldOutputTokensEstimated(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOutputTokensEstimated is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOutputTokensEstimated requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOutputTokensEstimated: %w", err)
+	}
+	return oldValue.OutputTokensEstimated, nil
+}
+
+// ResetOutputTokensEstimated resets all changes to the "output_tokens_estimated" field.
+func (m *UsageLogMutation) ResetOutputTokensEstimated() {
+	m.output_tokens_estimated = nil
 }
 
 // SetCacheCreationTokens sets the "cache_creation_tokens" field.
@@ -47420,7 +47457,7 @@ func (m *UsageLogMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UsageLogMutation) Fields() []string {
-	fields := make([]string, 0, 47)
+	fields := make([]string, 0, 48)
 	if m.user != nil {
 		fields = append(fields, usagelog.FieldUserID)
 	}
@@ -47471,6 +47508,9 @@ func (m *UsageLogMutation) Fields() []string {
 	}
 	if m.output_tokens != nil {
 		fields = append(fields, usagelog.FieldOutputTokens)
+	}
+	if m.output_tokens_estimated != nil {
+		fields = append(fields, usagelog.FieldOutputTokensEstimated)
 	}
 	if m.cache_creation_tokens != nil {
 		fields = append(fields, usagelog.FieldCacheCreationTokens)
@@ -47604,6 +47644,8 @@ func (m *UsageLogMutation) Field(name string) (ent.Value, bool) {
 		return m.InputTokens()
 	case usagelog.FieldOutputTokens:
 		return m.OutputTokens()
+	case usagelog.FieldOutputTokensEstimated:
+		return m.OutputTokensEstimated()
 	case usagelog.FieldCacheCreationTokens:
 		return m.CacheCreationTokens()
 	case usagelog.FieldCacheReadTokens:
@@ -47707,6 +47749,8 @@ func (m *UsageLogMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldInputTokens(ctx)
 	case usagelog.FieldOutputTokens:
 		return m.OldOutputTokens(ctx)
+	case usagelog.FieldOutputTokensEstimated:
+		return m.OldOutputTokensEstimated(ctx)
 	case usagelog.FieldCacheCreationTokens:
 		return m.OldCacheCreationTokens(ctx)
 	case usagelog.FieldCacheReadTokens:
@@ -47894,6 +47938,13 @@ func (m *UsageLogMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOutputTokens(v)
+		return nil
+	case usagelog.FieldOutputTokensEstimated:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOutputTokensEstimated(v)
 		return nil
 	case usagelog.FieldCacheCreationTokens:
 		v, ok := value.(int)
@@ -48594,6 +48645,9 @@ func (m *UsageLogMutation) ResetField(name string) error {
 		return nil
 	case usagelog.FieldOutputTokens:
 		m.ResetOutputTokens()
+		return nil
+	case usagelog.FieldOutputTokensEstimated:
+		m.ResetOutputTokensEstimated()
 		return nil
 	case usagelog.FieldCacheCreationTokens:
 		m.ResetCacheCreationTokens()

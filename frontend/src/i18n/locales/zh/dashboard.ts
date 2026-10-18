@@ -415,6 +415,8 @@ export default {
     unknown: '未知',
     in: '输入',
     out: '输出',
+    estimated: '估算',
+    outputEstimateHint: '上游最终用量缺失，输出费用包含按已接收内容计算的本地估算。',
     cacheHit: '缓存命中',
     cacheCreate: '缓存创建',
     cacheHitRate: '缓存命中率',

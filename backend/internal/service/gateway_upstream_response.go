@@ -736,6 +736,8 @@ func (s *GatewayService) handleStreamingResponse(ctx context.Context, resp *http
 	}
 
 	usage := &ClaudeUsage{}
+	outputTracker := s.streamOutputTracker()
+	defer outputTracker.finalize(usage, c, account)
 	var firstTokenMs *int
 	scanner := bufio.NewScanner(resp.Body)
 	// 设置更大的buffer以处理长行
@@ -907,6 +909,7 @@ func (s *GatewayService) handleStreamingResponse(ctx context.Context, resp *http
 
 		eventType, _ := event["type"].(string)
 		observer.ObserveAnthropic([]byte(dataLine))
+		outputTracker.observe(dataLine)
 		if eventName == "" {
 			eventName = eventType
 		}
@@ -1207,6 +1210,10 @@ func (s *GatewayService) extractSSEUsagePatch(event map[string]any) *sseUsagePat
 		}
 
 		patch := &sseUsagePatch{}
+		if v, ok := parseSSEUsageInt(usageObj["output_tokens"]); ok {
+			patch.outputTokens = v
+			patch.hasOutputTokens = true
+		}
 		patch.hasInputTokens = true
 		if v, ok := parseSSEUsageInt(usageObj["input_tokens"]); ok {
 			patch.inputTokens = v
@@ -1242,7 +1249,7 @@ func (s *GatewayService) extractSSEUsagePatch(event map[string]any) *sseUsagePat
 			patch.inputTokens = v
 			patch.hasInputTokens = true
 		}
-		if v, ok := parseSSEUsageInt(usageObj["output_tokens"]); ok && v > 0 {
+		if v, ok := parseSSEUsageInt(usageObj["output_tokens"]); ok && v >= 0 {
 			patch.outputTokens = v
 			patch.hasOutputTokens = true
 		}
