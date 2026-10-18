@@ -165,6 +165,7 @@
                 <div class="inline-flex items-center gap-1">
                   <Icon name="arrowUp" size="sm" class="h-3.5 w-3.5 text-violet-500" />
                   <span class="font-medium text-gray-900 dark:text-white">{{ row.output_tokens?.toLocaleString() || 0 }}</span>
+                  <span v-if="row.output_tokens_estimated" class="text-xs text-amber-600 dark:text-amber-400" :title="t('usage.outputEstimateHint')">{{ t('usage.estimated') }}</span>
                 </div>
               </div>
               <div v-if="row.cache_read_tokens > 0 || row.cache_creation_tokens > 0" class="flex items-center gap-2">

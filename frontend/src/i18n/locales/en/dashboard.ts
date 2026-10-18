@@ -410,6 +410,8 @@ export default {
     unknown: 'Unknown',
     in: 'In',
     out: 'Out',
+    estimated: 'Estimated',
+    outputEstimateHint: 'Final upstream usage was unavailable. Output charges include a local estimate of received content.',
     cacheHit: 'Cache hit',
     cacheCreate: 'Cache create',
     cacheHitRate: 'Cache hit rate',

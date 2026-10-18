@@ -1800,6 +1800,7 @@ export interface UsageLog {
   request_type?: UsageRequestType
   stream: boolean
   openai_ws_mode?: boolean
+  output_tokens_estimated?: boolean
   native_compaction_v2: boolean
   duration_ms: number | null
   first_token_ms: number | null

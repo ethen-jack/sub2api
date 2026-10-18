@@ -33,6 +33,8 @@ const localizedMessages: Record<'en' | 'zh', Record<string, string>> = {
 }
 
 const messages: Record<string, string> = {
+  'usage.estimated': 'Estimated',
+  'usage.outputEstimateHint': 'Final upstream usage was unavailable.',
   'usage.outputTps': 'Output TPS',
   'admin.usage.userDeletedBadge': 'Deleted',
   'usage.costDetails': 'Cost Breakdown',
@@ -145,6 +147,20 @@ const baseImageRow = {
 }
 
 describe('admin UsageTable tooltip', () => {
+  it('labels estimated output without labeling upstream counts', () => {
+    const row = { ...baseImageRow, image_count: 0, billing_mode: 'token', output_tokens: 25 }
+    const wrapper = mount(UsageTable, {
+      props: {
+        data: [{ ...row, output_tokens_estimated: true }, row],
+        loading: false,
+        columns: [{ key: 'tokens', label: 'Tokens' }],
+      },
+      global: { stubs: { DataTable: DataTableStub, EmptyState: true, Icon: true, Teleport: true } },
+    })
+    const labels = wrapper.findAll('[title="Final upstream usage was unavailable."]')
+    expect(labels).toHaveLength(1)
+    expect(labels[0]?.text()).toBe('Estimated')
+  })
   it('shows output TPS in the latency cell using total duration', () => {
     const row = { ...baseImageRow, image_count: 0, billing_mode: 'token', output_tokens: 1000, duration_ms: 20_000, first_token_ms: 10_000 }
     const wrapper = mount(UsageTable, {

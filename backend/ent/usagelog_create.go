@@ -225,6 +225,20 @@ func (_c *UsageLogCreate) SetNillableOutputTokens(v *int) *UsageLogCreate {
 	return _c
 }
 
+// SetOutputTokensEstimated sets the "output_tokens_estimated" field.
+func (_c *UsageLogCreate) SetOutputTokensEstimated(v bool) *UsageLogCreate {
+	_c.mutation.SetOutputTokensEstimated(v)
+	return _c
+}
+
+// SetNillableOutputTokensEstimated sets the "output_tokens_estimated" field if the given value is not nil.
+func (_c *UsageLogCreate) SetNillableOutputTokensEstimated(v *bool) *UsageLogCreate {
+	if v != nil {
+		_c.SetOutputTokensEstimated(*v)
+	}
+	return _c
+}
+
 // SetCacheCreationTokens sets the "cache_creation_tokens" field.
 func (_c *UsageLogCreate) SetCacheCreationTokens(v int) *UsageLogCreate {
 	_c.mutation.SetCacheCreationTokens(v)
@@ -705,6 +719,10 @@ func (_c *UsageLogCreate) defaults() {
 		v := usagelog.DefaultOutputTokens
 		_c.mutation.SetOutputTokens(v)
 	}
+	if _, ok := _c.mutation.OutputTokensEstimated(); !ok {
+		v := usagelog.DefaultOutputTokensEstimated
+		_c.mutation.SetOutputTokensEstimated(v)
+	}
 	if _, ok := _c.mutation.CacheCreationTokens(); !ok {
 		v := usagelog.DefaultCacheCreationTokens
 		_c.mutation.SetCacheCreationTokens(v)
@@ -841,6 +859,9 @@ func (_c *UsageLogCreate) check() error {
 	}
 	if _, ok := _c.mutation.OutputTokens(); !ok {
 		return &ValidationError{Name: "output_tokens", err: errors.New(`ent: missing required field "UsageLog.output_tokens"`)}
+	}
+	if _, ok := _c.mutation.OutputTokensEstimated(); !ok {
+		return &ValidationError{Name: "output_tokens_estimated", err: errors.New(`ent: missing required field "UsageLog.output_tokens_estimated"`)}
 	}
 	if _, ok := _c.mutation.CacheCreationTokens(); !ok {
 		return &ValidationError{Name: "cache_creation_tokens", err: errors.New(`ent: missing required field "UsageLog.cache_creation_tokens"`)}
@@ -1014,6 +1035,10 @@ func (_c *UsageLogCreate) createSpec() (*UsageLog, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.OutputTokens(); ok {
 		_spec.SetField(usagelog.FieldOutputTokens, field.TypeInt, value)
 		_node.OutputTokens = value
+	}
+	if value, ok := _c.mutation.OutputTokensEstimated(); ok {
+		_spec.SetField(usagelog.FieldOutputTokensEstimated, field.TypeBool, value)
+		_node.OutputTokensEstimated = value
 	}
 	if value, ok := _c.mutation.CacheCreationTokens(); ok {
 		_spec.SetField(usagelog.FieldCacheCreationTokens, field.TypeInt, value)
@@ -1551,6 +1576,18 @@ func (u *UsageLogUpsert) UpdateOutputTokens() *UsageLogUpsert {
 // AddOutputTokens adds v to the "output_tokens" field.
 func (u *UsageLogUpsert) AddOutputTokens(v int) *UsageLogUpsert {
 	u.Add(usagelog.FieldOutputTokens, v)
+	return u
+}
+
+// SetOutputTokensEstimated sets the "output_tokens_estimated" field.
+func (u *UsageLogUpsert) SetOutputTokensEstimated(v bool) *UsageLogUpsert {
+	u.Set(usagelog.FieldOutputTokensEstimated, v)
+	return u
+}
+
+// UpdateOutputTokensEstimated sets the "output_tokens_estimated" field to the value that was provided on create.
+func (u *UsageLogUpsert) UpdateOutputTokensEstimated() *UsageLogUpsert {
+	u.SetExcluded(usagelog.FieldOutputTokensEstimated)
 	return u
 }
 
@@ -2453,6 +2490,20 @@ func (u *UsageLogUpsertOne) AddOutputTokens(v int) *UsageLogUpsertOne {
 func (u *UsageLogUpsertOne) UpdateOutputTokens() *UsageLogUpsertOne {
 	return u.Update(func(s *UsageLogUpsert) {
 		s.UpdateOutputTokens()
+	})
+}
+
+// SetOutputTokensEstimated sets the "output_tokens_estimated" field.
+func (u *UsageLogUpsertOne) SetOutputTokensEstimated(v bool) *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetOutputTokensEstimated(v)
+	})
+}
+
+// UpdateOutputTokensEstimated sets the "output_tokens_estimated" field to the value that was provided on create.
+func (u *UsageLogUpsertOne) UpdateOutputTokensEstimated() *UsageLogUpsertOne {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateOutputTokensEstimated()
 	})
 }
 
@@ -3609,6 +3660,20 @@ func (u *UsageLogUpsertBulk) AddOutputTokens(v int) *UsageLogUpsertBulk {
 func (u *UsageLogUpsertBulk) UpdateOutputTokens() *UsageLogUpsertBulk {
 	return u.Update(func(s *UsageLogUpsert) {
 		s.UpdateOutputTokens()
+	})
+}
+
+// SetOutputTokensEstimated sets the "output_tokens_estimated" field.
+func (u *UsageLogUpsertBulk) SetOutputTokensEstimated(v bool) *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.SetOutputTokensEstimated(v)
+	})
+}
+
+// UpdateOutputTokensEstimated sets the "output_tokens_estimated" field to the value that was provided on create.
+func (u *UsageLogUpsertBulk) UpdateOutputTokensEstimated() *UsageLogUpsertBulk {
+	return u.Update(func(s *UsageLogUpsert) {
+		s.UpdateOutputTokensEstimated()
 	})
 }
 

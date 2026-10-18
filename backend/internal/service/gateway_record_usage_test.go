@@ -117,6 +117,32 @@ func TestGatewayServiceRecordUsage_BillingUsesDetachedContext(t *testing.T) {
 	require.NoError(t, quotaSvc.lastQuotaCtxErr)
 }
 
+func TestGatewayServiceRecordUsage_EstimatedOutputIsChargedAndMarked(t *testing.T) {
+	usageRepo := &openAIRecordUsageLogRepoStub{}
+	userRepo := &openAIRecordUsageUserRepoStub{}
+	svc := newGatewayRecordUsageServiceForTest(usageRepo, userRepo, &openAIRecordUsageSubRepoStub{})
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	usage := ClaudeUsage{InputTokens: 4, OutputTokens: 25, CacheReadInputTokens: 100, OutputTokensEstimated: true}
+	err := svc.RecordUsage(ctx, &RecordUsageInput{
+		Result: &ForwardResult{
+			RequestID: "interrupted-estimated-output", Usage: usage,
+			Model: "claude-sonnet-4", Stream: true, ClientDisconnect: true, Duration: time.Second,
+		},
+		APIKey: &APIKey{ID: 501}, User: &User{ID: 601}, Account: &Account{ID: 701},
+	})
+	require.NoError(t, err)
+	require.Equal(t, 1, userRepo.deductCalls)
+	require.NoError(t, userRepo.lastCtxErr)
+	require.NotNil(t, usageRepo.lastLog)
+	require.True(t, usageRepo.lastLog.OutputTokensEstimated)
+	require.Equal(t, 25, usageRepo.lastLog.OutputTokens)
+	require.Equal(t, 4, usageRepo.lastLog.InputTokens)
+	require.Equal(t, 100, usageRepo.lastLog.CacheReadTokens)
+	require.Positive(t, usageRepo.lastLog.OutputCost)
+	require.Positive(t, usageRepo.lastLog.ActualCost)
+}
+
 func TestGatewayServiceRecordUsage_BillingFingerprintIncludesRequestPayloadHash(t *testing.T) {
 	usageRepo := &openAIRecordUsageLogRepoStub{}
 	billingRepo := &openAIRecordUsageBillingRepoStub{result: &UsageBillingApplyResult{Applied: true}}

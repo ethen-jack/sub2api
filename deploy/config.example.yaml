@@ -496,6 +496,9 @@ gateway:
   # Stream data interval timeout (seconds), 0=disable
   # 流数据间隔超时（秒），0=禁用
   stream_data_interval_timeout: 180
+  # Estimate received output tokens when Anthropic final usage is missing (default: true).
+  # 默认开启：上游最终 usage 缺失时，按已接收输出估算补计；账单标记为估算，不能保证与上游完全一致。设为 false 可关闭。
+  stream_output_token_estimation: true
   # Stream keepalive interval (seconds), 0=disable
   # 流式 keepalive 间隔（秒），0=禁用
   stream_keepalive_interval: 10

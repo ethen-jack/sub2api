@@ -31,6 +31,32 @@ func TestLoadDefaultModelsListReadMaxBytes(t *testing.T) {
 	require.Equal(t, DefaultModelsListReadMaxBytes, cfg.Gateway.ModelsListReadMaxBytes)
 }
 
+func TestLoadStreamOutputTokenEstimation(t *testing.T) {
+	tests := []struct {
+		name string
+		yaml string
+		env  string
+		want bool
+	}{
+		{name: "enabled by default", yaml: "{}", want: true},
+		{name: "disabled by YAML", yaml: "gateway:\n  stream_output_token_estimation: false\n", want: false},
+		{name: "disabled by environment", yaml: "gateway:\n  stream_output_token_estimation: true\n", env: "false", want: false},
+		{name: "enabled by environment", yaml: "gateway:\n  stream_output_token_estimation: false\n", env: "true", want: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			resetViperWithJWTSecret(t)
+			configFile := filepath.Join(t.TempDir(), "config.yaml")
+			require.NoError(t, os.WriteFile(configFile, []byte(tt.yaml), 0600))
+			t.Setenv("CONFIG_FILE", configFile)
+			t.Setenv("GATEWAY_STREAM_OUTPUT_TOKEN_ESTIMATION", tt.env)
+			cfg, err := Load()
+			require.NoError(t, err)
+			require.Equal(t, tt.want, cfg.Gateway.StreamOutputTokenEstimation)
+		})
+	}
+}
+
 func TestLoadDefaultMinOutputTokens(t *testing.T) {
 	resetViperWithJWTSecret(t)
 	cfg, err := Load()

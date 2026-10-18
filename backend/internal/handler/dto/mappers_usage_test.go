@@ -49,6 +49,15 @@ func TestUsageLogFromService_PreservesNativeCompactionAndStream(t *testing.T) {
 	require.True(t, adminDTO.NativeCompactionV2)
 }
 
+func TestUsageLogFromService_ExposesEstimatedOutputToUserAndAdmin(t *testing.T) {
+	log := &service.UsageLog{Model: "claude-sonnet-4", OutputTokens: 25, OutputTokensEstimated: true}
+	for _, value := range []any{UsageLogFromService(log), UsageLogFromServiceAdmin(log)} {
+		data, err := json.Marshal(value)
+		require.NoError(t, err)
+		require.Contains(t, string(data), `"output_tokens_estimated":true`)
+	}
+}
+
 func TestUsageLogFromService_PrefersRequestTypeForLegacyFields(t *testing.T) {
 	t.Parallel()
 

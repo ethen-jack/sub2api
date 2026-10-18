@@ -142,6 +142,8 @@ docs/*
 !docs/PLUGIN_DEVELOPMENT.md
 !docs/channel-monitor-v2-safe-defaults.md
 !docs/codex-credits.md
+!docs/stream-interruption-billing.md
+!docs/deploy-local-to-8765.md
 !docs/legal/
 !docs/legal/*.md
 !docs/screenshots/
@@ -149,6 +151,7 @@ docs/screenshots/*
 !docs/screenshots/mobile-account-actions-menu.png
 !docs/screenshots/codex-referral-dialog.png
 !docs/screenshots/codex-referral-success.png
+!docs/screenshots/stream-output-estimated.png
 .serena/
 .codex/
 frontend/coverage/

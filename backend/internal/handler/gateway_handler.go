@@ -964,7 +964,7 @@ func (h *GatewayHandler) Messages(c *gin.Context) {
 				forceCacheBilling := fs.ForceCacheBilling
 				quotaPlatform := service.QuotaPlatform(c.Request.Context(), currentAPIKey)
 				sessionID := service.ExtractClientSessionID(c)
-				h.submitUsageRecordTask(c.Request.Context(), func(ctx context.Context) {
+				h.submitForwardUsageRecordTask(c.Request.Context(), result, err, func(ctx context.Context) {
 					if err := h.gatewayService.RecordUsage(ctx, &service.RecordUsageInput{
 						Result:             result,
 						QuotaPlatform:      quotaPlatform,
@@ -2561,6 +2561,16 @@ func (h *GatewayHandler) maybeLogCompatibilityFallbackMetrics(reqLog *zap.Logger
 		zap.Float64("session_hash_legacy_read_hit_rate", metrics.SessionHashLegacyReadHitRate),
 		zap.Int64("metadata_legacy_fallback_total", metrics.MetadataLegacyFallbackTotal),
 	)
+}
+
+// Interrupted streams must not lose their observed or estimated bill a second
+// time when the ordinary usage queue applies a drop/sample overflow policy.
+func (h *GatewayHandler) submitForwardUsageRecordTask(parent context.Context, result *service.ForwardResult, forwardErr error, task service.UsageRecordTask) {
+	if result != nil && result.Stream && (forwardErr != nil || result.ClientDisconnect || result.Usage.OutputTokensEstimated) {
+		h.submitMandatoryUsageRecordTask(parent, task)
+		return
+	}
+	h.submitUsageRecordTask(parent, task)
 }
 
 func (h *GatewayHandler) submitUsageRecordTask(parent context.Context, task service.UsageRecordTask) {
